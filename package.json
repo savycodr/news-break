@@ -1,0 +1,30 @@
+{
+  "name": "news-break",
+  "version": "1.0.0",
+  "description": "Displays the local news and provides a means for users to write comments.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/savycodr/news-break.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/savycodr/news-break/issues"
+  },
+  "homepage": "https://github.com/savycodr/news-break#readme",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "chai": "^4.2.0",
+    "cheerio": "^1.0.0-rc.3",
+    "eslint": "^5.16.0",
+    "express": "^4.17.0",
+    "express-handlebars": "^3.1.0",
+    "mocha": "^6.1.4",
+    "mongoose": "^5.5.11",
+    "morgan": "^1.9.1"
+  }
+}
