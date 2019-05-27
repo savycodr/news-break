@@ -90,8 +90,8 @@ module.exports = function (app) {
       .then(function (dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
         // res.json(dbArticle);
-        res.render("saved", {openloginmodal:"no", articles: dbArticle });
-        // res.render("saved", { articles: dbArticle });
+        // res.render("saved", {openloginmodal:"no", articles: dbArticle });
+        res.render("saved", { articles: dbArticle });
       })
       .catch(function (err) {
         // If an error occurred, send it to the client
@@ -100,7 +100,7 @@ module.exports = function (app) {
 
   });
 
-  // Here we get all the saved articles from the database
+  // Here we delete an article from the database
   app.delete("/api/article/:id", function (req, res) {
 
     let id = req.params.id;
@@ -142,13 +142,18 @@ module.exports = function (app) {
   // a poplulate is like a join.
   // we join all the notes attached to the article
   app.get("/api/notes/:articleid", function (req, res) {
+    
+    console.log("we made it to a place to get notes " + req.params.articleid);
+
 
     db.Article.findOne({ _id: req.params.articleid })
       .populate("note")
       .then(function (dbArticle) {
         // If we were able to successfully find an Article with the given id, send it back to the client
-        res.render('saved',{openloginmodal:"yes", article:dbArticle});
-        // res.json(dbArticle);
+        // res.render('saved',{openloginmodal:"yes", article:dbArticle});
+        console.log("Heather we are about to show you the money.");
+        console.log(JSON.stringify(dbArticle))
+        res.json(dbArticle);
       })
       .catch(function (err) {
         // If an error occurred, send it to the client
@@ -157,4 +162,17 @@ module.exports = function (app) {
       })
   });
 
-};
+// Delete the note
+  app.delete("/api/notes/:noteid", function (req, res) {
+    console.log("Here is the id we are deleting: " + req.params.noteid);
+    db.Note.findOneAndRemove({ _id: req.params.noteid })
+    .then(function (dbArticle) {
+      // If we were able to successfully update an Article, send it back to the client
+      res.json(dbArticle);
+    })
+    .catch(function (err) {
+      // If an error occurred, send it to the client
+      res.json(err);
+    });
+});
+}

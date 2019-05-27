@@ -1,3 +1,9 @@
+{{!-- {{#if openloginmodal}} 
+  <script type="text/javascript">$("#noteModal").modal('show');</script>
+{{/if}} --}}
+
+
+
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -47,8 +53,11 @@
     <div class = "col-sm-2">
         <button type="submit" class="btn btn-primary del-article-btn" data-id="{{_id}}" >Delete Article</button>
     </div>
+    {{!-- <div class = "col-sm-2">
+        <button type="button" class="btn btn-primary" id="get-notes-btn" data-id="{{_id}}">Add Note</button>
+    </div> --}}
     <div class = "col-sm-2">
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#noteModal" data-id="{{_id}}">Add Note</button>
+        <button type="button" class="btn btn-primary" id="get-notes-btn" data-toggle="modal" data-target="#noteModal" data-id="{{_id}}">Add Note</button>
     </div>
   </div>
 <a href="https://www.nhl.com/{{link}}" target="_blank">
@@ -66,23 +75,28 @@
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Notes</h5>
+        <h5 class="modal-title">Notes for {{id}}</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
+      
       {{!-- Show the saved notes --}}
       <div class="modal-body">
-        {{#each notes}}
-        <div class="row">
+
+        <ul class="list-group note-container">
+        </ul>
+
+        {{!-- {{#each notes}} --}}
+        {{!-- <div class="row">
           <div class="col-sm-11">
             <p>{{body}}</p>
            </div>
           <div class="col-sm-1">
             <span class="oi oi-x"></span>
            </div>
-        </div>
-        {{/each}}
+        </div> --}}
+        {{!-- {{/each}} --}}
         {{!-- Add an input for new notes --}}
         <form>
           <div class="form-group">

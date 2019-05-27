@@ -1,9 +1,9 @@
 // Make sure we wait to attach our handlers until the DOM is fully loaded.
-$(function() {
+$(function () {
 
   // listen to the button with the id="load-stories-btn" for a click
   // then do a GET which will retrieve the twenty articles
-  $("#load-stories-btn").on("click", function(event) {
+  $("#load-stories-btn").on("click", function (event) {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
     console.log("THE SUBMIT HAS BEEN HIT");
@@ -11,7 +11,7 @@ $(function() {
     $.ajax("/api/articles", {
       type: "GET"
     }).then(
-      function() {
+      function () {
         console.log("retrived 20 articles");
         // Reload the page to get the updated list
         // HLS didn't want to reload because was hoping handlebars
@@ -24,7 +24,7 @@ $(function() {
   // listen to the button with the class="save-article-btn" for a click
   // then do a POST which will write the article to the database
   // then remove the article from the displayed list so it cannot be saved again.
-  $(".save-article-btn").on("click", function(event) {
+  $(".save-article-btn").on("click", function (event) {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
 
@@ -43,13 +43,13 @@ $(function() {
     // and then clear it?
     // $(this).parent().parent().empty();
     let nth = $(this).data("number");
-    $("#"+nth).empty();
+    $("#" + nth).empty();
 
     $.ajax("/api/article", {
       type: "POST",
       data: article
     }).then(
-      function() {
+      function () {
         console.log("saved article");
         // Reload the page to get the updated list
         location.reload();
@@ -60,38 +60,40 @@ $(function() {
   // listen to the button with the class="del-article-btn" for a click
   // then do a DELETE which will delete the article from the database
   // then remove the article from the displayed list.
-  $(".del-article-btn").on("click", function(event) {
+  $(".del-article-btn").on("click", function (event) {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
 
     let id = $(this).data("id");
-    console.log("HEATHER IN DELETE not empty id " + id );    
+    console.log("HEATHER IN DELETE not empty id " + id);
 
-    $.ajax("/api/article/"+id, {
+    $.ajax("/api/article/" + id, {
       type: "DELETE"
     }).then(
-      function() {
+      function () {
         console.log("deleted article");
         // Reload the page to get the updated list
         location.reload();
       }
     );
   });
-  
+
   // listen for a click on the save-note-btn. Then
   // get the text from the input and call a post method
-  $("#save-note-btn").on("click", function(event) {
+  $("#save-note-btn").on("click", function (event) {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
 
+    //HLS this seems to work but I never see this message?
+    console.log("HEATHER the save button on modal was heard");
     let note = $("#message-text").val();
     let id = $("#noteModal").data("articleid");
 
-    $.ajax("/api/note/"+id, {
-      type: "POST", 
-      data: {body: note}
+    $.ajax("/api/note/" + id, {
+      type: "POST",
+      data: { body: note }
     }).then(
-      function() {
+      function () {
         console.log("saved note");
         // Reload the page to get the updated list
         location.reload();
@@ -99,12 +101,75 @@ $(function() {
     );
   });
 
-// This is how we pass the articleID  to the modal
-// This function will be called before open boostrap modal window. 
-// We can get the data-id attribute value of the modal launch button and we can write it to the modal
-  $('#noteModal').on('show.bs.modal', function(event) {
+  // listen for a click on the get-notes-btn. Then
+  // place a get call to retireve all the notes for an article.
+  // NOTE: using jQuery instead of handlebars because we are dealing with a modal
+  $("#get-notes-btn").on("click", function (event) {
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+    // clear the notes display
+    $("note-container").empty();
+
+    let id = $(this).data("id");
+    console.log("Might not have the articleid yet " + id);
+
+    $.ajax("/api/notes/" + id, {
+      type: "GET"
+    }).then(
+      function (data) {
+        console.log("HEATHER HERE IS YOUR DATA JSONIFIED");
+        console.log(data);
+
+        // If there's a note in the article
+        if (data.note) {
+          let noteCont = $(".note-container");
+          let li = $("<li>").addClass("list-group-item note");
+          li.text(data.note.body);
+          noteCont.append(li);
+          let buttonX = $("<button>").addClass("btn btn-danger note-delete");
+          buttonX.addClass("btn btn-primary float-right");
+          buttonX.text("X");
+          buttonX.attr("data-noteid", data.note._id);
+          li.append(buttonX);
+        }
+      }
+    );
+  });
+
+  // listen for a click on the del-note-btn. Then
+  // place a get call to update the article to remove the note
+  // NOTE: using jQuery instead of handlebars because we are dealing with a modal
+  // $(document).on('click','.edit', function() { will bind the event on the .note-delete elements which are not present at the time of binding event. This is called event delegation  
+  // $(staticAncestors).on(eventName, dynamicChild, function() {});
+  $(".note-container").on("click", ".note-delete", function (event) {
+    // The following line did not work for dynamically created buttons
+    // $(".note-delete").on("click", function (event) {
+
+    // Make sure to preventDefault on a submit event.
+    event.preventDefault();
+    // HLS this never gets called???
+    let id = $(this).data("noteid");
+
+    $.ajax("/api/notes/" + id, {
+      type: "DELETE"
+    }).then(
+      function () {
+        console.log("deleted article");
+        // Reload the page to get the updated list
+        location.reload();
+      });
+  });
+
+  // This is how we pass the articleID  to the modal
+  // This function will be called before open boostrap modal window. 
+  // We can get the data-id attribute value of the modal launch button and we can write it to the modal
+  $('#noteModal').on('show.bs.modal', function (event) {
     var articleID = $(event.relatedTarget).data('id');
     console.log("HEATHER the articleID is " + articleID);
     $("#noteModal").attr("data-articleid", articleID);
+
+    // var modal = $(this)
+    // modal.find('.modal-title').text('New message to ' + recipient)
+    // modal.find('.modal-body input').val(recipient)
   });
 });
