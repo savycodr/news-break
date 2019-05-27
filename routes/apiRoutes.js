@@ -90,7 +90,8 @@ module.exports = function (app) {
       .then(function (dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
         // res.json(dbArticle);
-        res.render("saved", {articles : dbArticle});
+        res.render("saved", {openloginmodal:"no", articles: dbArticle });
+        // res.render("saved", { articles: dbArticle });
       })
       .catch(function (err) {
         // If an error occurred, send it to the client
@@ -99,5 +100,61 @@ module.exports = function (app) {
 
   });
 
+  // Here we get all the saved articles from the database
+  app.delete("/api/article/:id", function (req, res) {
+
+    let id = req.params.id;
+
+    // Delete the article in the Articles collection
+    db.Article.remove({ "_id": id })
+      .then(function (dbArticle) {
+        res.json(dbArticle);
+      })
+      .catch(function (err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+      });
+
+  });
+
+  // Save the note passed in, to the database and join with the article
+  app.post("/api/note/:articleid", function (req, res) {
+
+    db.Note.create(req.body).then(function (dbNote) {
+      // note has been created in the database but we need to join it with the article
+      // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
+      // { new: true } tells the query that we want it to return the updated Article -- it returns the original by default
+      // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
+      return db.Article.findOneAndUpdate({ _id: req.params.articleid }, { note: dbNote._id }, { new: true });
+    })
+      .then(function (dbArticle) {
+        // If we were able to successfully update an Article, send it back to the client
+        res.json(dbArticle);
+      })
+      .catch(function (err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+      });
+
+  });
+
+  // Get all the notes for an article
+  // a poplulate is like a join.
+  // we join all the notes attached to the article
+  app.get("/api/notes/:articleid", function (req, res) {
+
+    db.Article.findOne({ _id: req.params.articleid })
+      .populate("note")
+      .then(function (dbArticle) {
+        // If we were able to successfully find an Article with the given id, send it back to the client
+        res.render('saved',{openloginmodal:"yes", article:dbArticle});
+        // res.json(dbArticle);
+      })
+      .catch(function (err) {
+        // If an error occurred, send it to the client
+        res.json(err);
+
+      })
+  });
 
 };

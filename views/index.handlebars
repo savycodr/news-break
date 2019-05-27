@@ -40,12 +40,12 @@
 {{!-- This block displays the scraped articles --}}
 <div class="container-fluid">
 {{#each articles}}
-  <div class="row title-row">
+  <div class="row title-row" id="{{@index}}">
     <div class = "col-sm-10">
       <h2>{{title}}</h2>
     </div>
     <div class = "col-sm-2">
-        <button type="submit" class="btn btn-primary save-article-btn" data-title="{{title}}" data-summary="{{summary}}" data-link="{{link}}">Save Article</button>
+        <button type="submit" class="btn btn-primary save-article-btn" data-title="{{title}}" data-summary="{{summary}}" data-link="{{link}}"  data-number="{{@index}}">Save Article</button>
     </div>
   </div>
 <a href="https://www.nhl.com/{{link}}" target="_blank">
