@@ -1,6 +1,9 @@
 
 module.exports = function (app) {
 
+  // Our scraping tools
+  // Axios is a promised-based http library, similar to jQuery's Ajax method
+  // It works on the client and on the server
   // Need cheerio for the web scraping
   var cheerio = require("cheerio");
   // need axios to retreive the website to be scraped
@@ -56,7 +59,7 @@ module.exports = function (app) {
       console.log(results);
       // we need to build a handlebars response with the article data
       // HLS why does this call a GET /api/articles
-       res.render("index", { articles: results });
+      res.render("index", { articles: results });
     });
   });
 
@@ -94,6 +97,7 @@ module.exports = function (app) {
   });
 
   // Here we delete an article from the database
+  // HLS this does not delete any notes associated with this database
   app.delete("/api/article/:id", function (req, res) {
 
     let id = req.params.id;
@@ -119,7 +123,6 @@ module.exports = function (app) {
       // { new: true } tells the query that we want it to return the updated Article -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
 
-      // HLS we need to push the note into the Article's array of notes
       // return db.Article.findOneAndUpdate({ _id: req.params.articleid }, { note: dbNote._id }, { new: true });
       return db.Article.findOneAndUpdate({ _id: req.params.articleid }, { $push: { notes: dbNote._id } }, { new: true });
     })
@@ -140,7 +143,7 @@ module.exports = function (app) {
   // a poplulate is like a join.
   // we join all the notes attached to the article
   app.get("/api/notes/:articleid", function (req, res) {
-    
+
     console.log("we made it to a place to get notes " + req.params.articleid);
 
 
@@ -160,18 +163,25 @@ module.exports = function (app) {
       })
   });
 
-// Delete the note
-// HLS This does not remove the note reference from the Article
+  // Delete the note
+  // HLS This does not remove the note reference from the Article
   app.delete("/api/notes/:noteid", function (req, res) {
     console.log("Here is the id we are deleting: " + req.params.noteid);
     db.Note.findOneAndRemove({ _id: req.params.noteid })
-    .then(function (dbArticle) {
-      // If we were able to successfully update an Article, send it back to the client
-      res.json(dbArticle);
-    })
-    .catch(function (err) {
-      // If an error occurred, send it to the client
-      res.json(err);
-    });
-});
+      .then(function (dbNote) {
+
+        //HLS 
+        // find the Article and remove the note from the article
+        return db.Article.findOneAndUpdate({ _id: req.body.id }, { $pop: { notes: req.params.noteid } }, { new: true })
+          .then(function (dbArticle) {
+
+            // If we were able to successfully update an Article, send it back to the client
+            res.json(dbArticle);
+          })
+          .catch(function (err) {
+            // If an error occurred, send it to the client
+            res.json(err);
+          });
+      });
+  });
 }

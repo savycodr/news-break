@@ -2,22 +2,12 @@ var express = require("express");
 var logger = require("morgan");
 var mongoose = require("mongoose");
 
-// Our scraping tools
-// Axios is a promised-based http library, similar to jQuery's Ajax method
-// It works on the client and on the server
-var axios = require("axios");
-var cheerio = require("cheerio");
 
 // will use handlebars to create user interface on the server
 var exphbs = require("express-handlebars");
 
-
-// Require all models
-var db = require("./models");
-
-
-
-var PORT = 3000;
+// Port will be set by the webserver or if localhost will be set to 8080
+var PORT = process.env.PORT || 3000;
 
 // Initialize Express
 var app = express();

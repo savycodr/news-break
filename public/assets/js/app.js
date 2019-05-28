@@ -125,6 +125,7 @@ $(function () {
           // If there's a note in the article
           if (note) {
             let noteCont = $(".note-container");
+            noteCont.attr("data-articleid", id);
             let li = $("<li>").addClass("list-group-item note");
             li.text(note.body);
             noteCont.append(li);
@@ -152,12 +153,15 @@ $(function () {
     event.preventDefault();
     // HLS this never gets called???
     let id = $(this).data("noteid");
+    let articleid = $("note-container").data("articleid");
+    console.log("HEATHER THE ARTICLE ID IS " + articleid);
 
     $.ajax("/api/notes/" + id, {
-      type: "DELETE"
+      type: "DELETE",
+      data: {id: articleid}
     }).then(
       function () {
-        console.log("deleted article");
+        console.log("deleted note");
         // Reload the page to get the updated list
         location.reload();
       });
