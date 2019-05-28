@@ -7,6 +7,8 @@ $(function () {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
     console.log("THE SUBMIT HAS BEEN HIT");
+    // empty any old stuff before repopulating
+    $(".article-container").empty();
 
     $.ajax("/api/articles", {
       type: "GET"
@@ -52,7 +54,9 @@ $(function () {
       function () {
         console.log("saved article");
         // Reload the page to get the updated list
-        location.reload();
+        // This causes trouble because will re-display the saved article
+        // We want the saved article to remain off the list
+        //location.reload();
       }
     );
   });
@@ -107,8 +111,8 @@ $(function () {
   $("#get-notes-btn").on("click", function (event) {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
-    // clear the notes display
-    $("note-container").empty();
+    // clear the notes display of the modal
+    $(".note-container").empty();
 
     let id = $(this).data("id");
     console.log("Might not have the articleid yet " + id);
