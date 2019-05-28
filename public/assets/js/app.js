@@ -14,9 +14,9 @@ $(function () {
       function () {
         console.log("retrived 20 articles");
         // Reload the page to get the updated list
-        // HLS didn't want to reload because was hoping handlebars
+        // HLS didn't want to do this replace because was hoping handlebars
         // had rendered it from the server
-        // location.reload();
+        location.replace("/api/articles");
       }
     );
   });
@@ -120,17 +120,20 @@ $(function () {
         console.log("HEATHER HERE IS YOUR DATA JSONIFIED");
         console.log(data);
 
-        // If there's a note in the article
-        if (data.note) {
-          let noteCont = $(".note-container");
-          let li = $("<li>").addClass("list-group-item note");
-          li.text(data.note.body);
-          noteCont.append(li);
-          let buttonX = $("<button>").addClass("btn btn-danger note-delete");
-          buttonX.addClass("btn btn-primary float-right");
-          buttonX.text("X");
-          buttonX.attr("data-noteid", data.note._id);
-          li.append(buttonX);
+        for (let i = 0; i < data.notes.length; i++) {
+          let note = data.notes[i];
+          // If there's a note in the article
+          if (note) {
+            let noteCont = $(".note-container");
+            let li = $("<li>").addClass("list-group-item note");
+            li.text(note.body);
+            noteCont.append(li);
+            let buttonX = $("<button>").addClass("btn btn-danger note-delete");
+            buttonX.addClass("btn btn-primary float-right");
+            buttonX.text("X");
+            buttonX.attr("data-noteid", note._id);
+            li.append(buttonX);
+          }
         }
       }
     );

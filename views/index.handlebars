@@ -12,10 +12,10 @@
         <a class="nav-link" href="/api/savedArticles">Saved Articles</a>
       </li>
     </ul>
-    <form class="form-inline my-2 my-lg-0">
+    {{!-- <form class="form-inline my-2 my-lg-0">
       <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
       <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
-    </form>
+    </form> --}}
   </div>
 </nav>
 
@@ -26,7 +26,7 @@
 {{!-- This block will only be shown if there are no stories loaded yet --}}
 {{#unless articles}}
 <div id="no-stories" class="jumbotron jumbotron-fluid">
-  <h1 class="text-center"> There are no stories loaded yet. {{title}}</h1>
+  <h1 class="text-center"> There are no stories loaded yet.</h1>
 
   <div class="form-row text-center" id="load-stories">
     <div class="col-12">

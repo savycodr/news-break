@@ -39,8 +39,6 @@ module.exports = function (app) {
 
         // The Url is in the parent
         var link = $(element).parent().attr("href");
-        // console.log("the link is " + link);
-        // console.log("the i is " + i);
 
         // push into results array
         results.push({
@@ -55,18 +53,15 @@ module.exports = function (app) {
           return false;
         }
       });
-      console.log("here are our results1");
       console.log(results);
-      console.log("we are going to render index");
       // we need to build a handlebars response with the article data
       // HLS why does this call a GET /api/articles
-      res.render("index", { articles: results });
+       res.render("index", { articles: results });
     });
   });
 
   // Save the article passed in, to the database
   app.post("/api/article", function (req, res) {
-
 
     console.log("HEATHER The req.body is " + JSON.stringify(req.body));
     // Create a new Article using the `result` object built from scraping
@@ -89,8 +84,6 @@ module.exports = function (app) {
     db.Article.find({})
       .then(function (dbArticle) {
         // If we were able to successfully find Articles, send them back to the client
-        // res.json(dbArticle);
-        // res.render("saved", {openloginmodal:"no", articles: dbArticle });
         res.render("saved", { articles: dbArticle });
       })
       .catch(function (err) {
@@ -125,10 +118,15 @@ module.exports = function (app) {
       // If a Note was created successfully, find one Article with an `_id` equal to `req.params.id`. Update the Article to be associated with the new Note
       // { new: true } tells the query that we want it to return the updated Article -- it returns the original by default
       // Since our mongoose query returns a promise, we can chain another `.then` which receives the result of the query
-      return db.Article.findOneAndUpdate({ _id: req.params.articleid }, { note: dbNote._id }, { new: true });
+
+      // HLS we need to push the note into the Article's array of notes
+      // return db.Article.findOneAndUpdate({ _id: req.params.articleid }, { note: dbNote._id }, { new: true });
+      return db.Article.findOneAndUpdate({ _id: req.params.articleid }, { $push: { notes: dbNote._id } }, { new: true });
     })
       .then(function (dbArticle) {
         // If we were able to successfully update an Article, send it back to the client
+        console.log("HEATHER HERE IS THE ARTICLE WITH NEW NOTE");
+        console.log(JSON.stringify(dbArticle));
         res.json(dbArticle);
       })
       .catch(function (err) {
@@ -147,7 +145,7 @@ module.exports = function (app) {
 
 
     db.Article.findOne({ _id: req.params.articleid })
-      .populate("note")
+      .populate("notes")
       .then(function (dbArticle) {
         // If we were able to successfully find an Article with the given id, send it back to the client
         // res.render('saved',{openloginmodal:"yes", article:dbArticle});
@@ -163,6 +161,7 @@ module.exports = function (app) {
   });
 
 // Delete the note
+// HLS This does not remove the note reference from the Article
   app.delete("/api/notes/:noteid", function (req, res) {
     console.log("Here is the id we are deleting: " + req.params.noteid);
     db.Note.findOneAndRemove({ _id: req.params.noteid })

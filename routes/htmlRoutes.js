@@ -5,7 +5,7 @@ module.exports = function (app) {
   app.get("/", function (req, res) {
     // render the initial page
     var articles = [];
-    res.render("index", {articles: articles, title:"hee-Haw"});
+    res.render("index", {articles: articles});
   });
   
 }
