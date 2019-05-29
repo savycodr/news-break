@@ -97,10 +97,11 @@ module.exports = function (app) {
   });
 
   // Here we delete an article from the database
-  // HLS this does not delete any notes associated with this database
+  // this does not delete any notes associated with this database
   app.delete("/api/article/:id", function (req, res) {
 
     let id = req.params.id;
+    // HLS ideally we would get a hold of all the notes in the article and delete them.
 
     // Delete the article in the Articles collection
     db.Article.remove({ "_id": id })
@@ -144,7 +145,7 @@ module.exports = function (app) {
   // we join all the notes attached to the article
   app.get("/api/notes/:articleid", function (req, res) {
 
-    console.log("we made it to a place to get notes " + req.params.articleid);
+    // console.log("we made it to a place to get notes " + req.params.articleid);
 
 
     db.Article.findOne({ _id: req.params.articleid })
@@ -152,8 +153,8 @@ module.exports = function (app) {
       .then(function (dbArticle) {
         // If we were able to successfully find an Article with the given id, send it back to the client
         // res.render('saved',{openloginmodal:"yes", article:dbArticle});
-        console.log("Heather we are about to show you the money.");
-        console.log(JSON.stringify(dbArticle))
+        // console.log("Heather we are about to show you the money.");
+        // console.log(JSON.stringify(dbArticle))
         res.json(dbArticle);
       })
       .catch(function (err) {
@@ -163,18 +164,21 @@ module.exports = function (app) {
       })
   });
 
-  // Delete the note
-  // HLS This does not remove the note reference from the Article
+  // Delete the note from the database and
+  // HLS Remove the note reference from the Article
   app.delete("/api/notes/:noteid", function (req, res) {
-    console.log("Here is the id we are deleting: " + req.params.noteid);
+    // console.log("Here is the id we are deleting: " + req.params.noteid);
+    // console.log("Here is the id we are modifying: " + req.body.id);
+    // console.log("Here we are modifying: " + JSON.stringify(req.body));
     db.Note.findOneAndRemove({ _id: req.params.noteid })
       .then(function (dbNote) {
 
-        //HLS 
         // find the Article and remove the note from the article
-        return db.Article.findOneAndUpdate({ _id: req.body.id }, { $pop: { notes: req.params.noteid } }, { new: true })
+        return db.Article.findOneAndUpdate({ _id: req.body.id }, { $pull: { notes: [req.params.noteid] } }, { new: true })
           .then(function (dbArticle) {
-
+            // console.log("HEATHER here is the result of a pull [" + req.body.id + "] [" + req.params.noteid +"]");
+            // console.log(JSON.stringify(dbArticle));
+            // console.log(dbArticle);
             // If we were able to successfully update an Article, send it back to the client
             res.json(dbArticle);
           })

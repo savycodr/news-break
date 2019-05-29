@@ -88,8 +88,6 @@ $(function () {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
 
-    //HLS this seems to work but I never see this message?
-    console.log("HEATHER the save button on modal was heard");
     let note = $("#message-text").val();
     let id = $("#noteModal").data("articleid");
 
@@ -108,7 +106,7 @@ $(function () {
   // listen for a click on the get-notes-btn. Then
   // place a get call to retireve all the notes for an article.
   // NOTE: using jQuery instead of handlebars because we are dealing with a modal
-  $("#get-notes-btn").on("click", function (event) {
+  $(".get-notes-btn").on("click", function (event) {
     // Make sure to preventDefault on a submit event.
     event.preventDefault();
     // clear the notes display of the modal
@@ -157,7 +155,7 @@ $(function () {
     event.preventDefault();
     // HLS this never gets called???
     let id = $(this).data("noteid");
-    let articleid = $("note-container").data("articleid");
+    let articleid = $(".note-container").data("articleid");
     console.log("HEATHER THE ARTICLE ID IS " + articleid);
 
     $.ajax("/api/notes/" + id, {
