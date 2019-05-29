@@ -7,5 +7,5 @@ module.exports = function (app) {
     var articles = [];
     res.render("index", {articles: articles});
   });
-  
-}
+
+};

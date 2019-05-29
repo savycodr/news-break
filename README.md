@@ -2,7 +2,7 @@
 Displays the local news and provides a means for users to write comments. This app gets its news from nhl.com.
 
 ## Instructions
-1. Visit the News Break website. 
+1. Visit the [News Break](https://enigmatic-crag-82281.herokuapp.com/) website. 
 2. Select Load Articles button.
 3. Select an Article you wish to save.
 4. Add a note to the Article.
